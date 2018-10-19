@@ -1,0 +1,75 @@
+---
+title: "Student Housing"
+output: 
+  html_document:
+    theme: cerulean
+    code_folding: hide
+    toc: true
+    toc_float: true
+---
+
+```{r, include=FALSE}
+library(mosaic)
+library(DT) # If you get an error stating: 
+            # Error in library(DT): there is no package called 'DT'
+            # You will need to run: install.packages("DT") 
+            # in your Console, then try "Knit HTML" again.
+Rent <- read.csv("../Data/Rent.csv", header=TRUE)
+womenoptions <- subset(Rent, Type =="Approved Women's Housing")
+options <- subset(Rent, Type == "Approved Women's Housing" & Price <= 1200 & Distance <= .5 & Capacity >= 90) 
+moreoptions <- subset(Rent, Type == "Approved Women's Housing" & Price <= 1200 & Distance < .75 & Capacity >= 140 & Price != 990) 
+NONA <- subset(Rent, Type == "Approved Women's Housing" & Distance != "NA") 
+```
+
+<br />
+
+## Background
+
+   I was tasked to help find housing options for Stephanie. She is a student that will be starting school at BYU-Idaho next semester. She would like to find something that is close to campus, around $300 a month in rent, and had a large student capacity. It can be daunting to find a suitable apartment when there are so many out there, but it can be much easier if we can narrow it down to just a few. 
+
+   The data is from the [BYU-Idaho Housing Website](https://web.byui.edu/tis/search)
+The first three observations of a dataset pulled from that website are shown in the following table. Only the approved women housing options are shown. There are a total of `r nrow(womenoptions)` observations in the dataset.
+
+```{r}
+datatable(womenoptions, options=list(lengthMenu = c(3,10,30)))
+```
+
+
+## Analysis
+
+There are a lot of options for Stephanie so I needed to make this list more manageable for her. 
+
+Stephanie did not set a limit on distance from campus or capacity so to find a good base I found the means of capacity and distance of all the women housings, which are `r mean(womenoptions$Capacity)` and `r mean(NONA$Distance)`, respectively 
+
+For an apartment to make the list it had to be less than $300 per month or 1200 per semester, less than a mile away from campus, and the apartment complex must be able to house at least 140 students. These requirements would ensure all of her needs and be around the means of capacity and distance. 
+
+The complexes found were: Birch Plaza, Aspen Village, Sunrise Village, Royal Crest, Northpoint, Hillcrest, American Avenue, Carriage House, and La Jolla. Which can be reviewed above for details. 
+
+This list of apartments still flet overwhelming so I continued to narrow things down by reducing distance to .75 of a mile. My search yielded 4 apartment complexs which are summarized below. I also did some additional research and found some unique amenities.
+
+#### Final Recommendations
+
+| Apartment      | Distance | Price  | Capacity | Phone         |Free Laundry| Free Parking |
+|----------------|----------|--------|----------|---------------|------------|--------------|
+|Aspen Village   | .47      |895     | 180      |(208) 356-7701 |No          |Yes           |
+|Sunrise Village | .74      | 895    |     144  |(208) 356-3995 |No          |No            | 
+|Hillcrest       |  .34     | 985    |140       |(208) 356-7211 |No          |No            |
+|American Avenue |.55       | 995    |  165     |(208) 356-5097 |Yes         |No            |
+
+```{r}
+par(mfrow=c(1,3))
+barplot(moreoptions$Price, col="blue", names = c("Aspen", "Sunrise", "Hillcrest", "American Avenue"), xlab = "Pricing", main = "Prices of Housing Per Semester", horiz = TRUE,)
+barplot(moreoptions$Distance, col="red", names = c("Aspen", "Sunrise", "Hillcrest", "American Avenue"), xlab = "Distance (miles)", main = "Distance From Campus", horiz = TRUE)
+barplot(moreoptions$Capacity, col="green", names = c("Aspen", "Sunrise", "Hillcrest", "American Avenue"), xlab = "Capacity", main = "Student Capacity by Complexes", horiz = TRUE)
+
+```
+
+## Interpretation
+
+All of the complexs are similar in price and capacity. What sets each apartment apart are distance and amenities. If Stephanie wants an apartment really close to campus then Hillcrest is a good choice. If she values price more, then Aspen and Sunrise are good choices. Aspen vilage has the highest student capacity so she is sure to enjoy the social environment there. 
+
+If she has a car then she might want to choose Aspen because they do not charge for parking like most complexes. American Avenue sets itself apart by offering free laundry. Aspen Village seems to be the best in all requirments. It is the lowest in pricing, the 2nd closest to campus, the highest capacity, and has free parking.  
+
+Although Aspen Village looks good on paper a more thorough research into all 4 could prove useful. Anyone of these options meet her needs based on her the information presented above, but there may be other factors that Stephanie could find important to her. Further research can be done to find out the size and look of the bedrooms, number of bathrooms, prices of parking, and other amenities such as exersize rooms. 
+
+

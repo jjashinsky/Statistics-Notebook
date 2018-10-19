@@ -1,0 +1,62 @@
+---
+title: "My Multiple Logistic Regression"
+output: 
+  html_document:
+    theme: cerulean
+    code_folding: hide
+---
+
+
+```{r, include=FALSE}
+library(mosaic)
+library(ResourceSelection) 
+library(car)
+library(pander)
+library(plyr)
+library(DT)
+GSS <- read.table("./Data/GSS2012.csv", sep="\t", header=TRUE)
+View(GSS)
+myGSS <- GSS[, c("age", "sex", "cappun")]
+View(myGSS)
+myGSS <- subset(myGSS, cappun==1 | cappun==2)
+```
+
+$$
+  P(Y_i = 1|\, x_{i1},x_{i22},\ldots,x_{i26}) = \frac{e^{\beta_0 + \beta_1 x_{i1} + \beta_2 x_{i22} + \ldots + \beta_6 x_{i26}}}{1+e^{e^{\beta_0 + \beta_1 x_{i1} + \beta_2 x_{i22} + \ldots + \beta_6 x_{i26}}}} = \pi_i
+$$
+
+$$
+  H_0: \beta_5 = 0 \\
+  H_a: \beta_5 \neq 0
+$$
+$$
+  H_0: \beta_6 = 0 \\
+  H_a: \beta_6 \neq 0
+$$
+$$
+\alpha = 0.05
+$$
+
+
+
+
+```{r, warning=FALSE}
+GSS.glm <-glm(cappun==1 ~ age * sex, data=myGSS, family=binomial)
+summary(GSS.glm)
+```
+
+
+
+```{r}
+b <- GSS.glm$coefficients
+plot(cappun==1 ~ age, data=myGSS, pch=16, col=sex)
+curve(exp(b[1]+b[2]*x)/(1+exp(b[1]+b[2]*x)), add=TRUE, col="red")
+curve(exp((b[1]+b[3])+(b[2]+b[4])*x)/(1+exp((b[1]+b[3])+(b[2]+b[4])*x)), add=TRUE, col="black")
+
+```
+
+```{r}
+hoslem.test(GSS.glm$y, GSS.glm$fitted)
+pchisq(2343.0, 1820)
+```
+

@@ -1,0 +1,81 @@
+---
+title: "Does the Budget Show?"
+
+output: 
+  html_document:
+    theme: cerulean
+    code_folding: hide
+    toc: true
+    toc_float: true
+---
+
+```{r, include=FALSE}
+library(mosaic)
+movies <- read.csv("../Data/movies.csv", header=TRUE)
+# To get the movies data into your Console, 
+# use the "Environment >> Import Dataset" command 
+# in the upper right of your RStudio window.
+movies$budget <- as.numeric(as.character(movies$budget))
+MoviesII <- subset(movies, budget != "NA")
+MoviesII$Rbudget <- MoviesII$budget/1000000
+
+```
+
+<br />
+
+## Background
+
+It seems that everything in this world costs money, and producing a movie is no different. It might be in the mind of some to think that the bigger the budget a movie gets, the better it will be received by the viewers. But this may not be true. If budget plays minimal to no role in the rating of movie, then a production company does not need to pay for a big name actor. They can make do with less money during production and spend more in advertising.  
+
+Certainly there are many factors that can influence the rating of a movie, but is budget one of them? My hypothesis is that it will.  
+
+The data was collected and pulled from IMDB. (Click on the link for details about the [movies](https://vincentarelbundock.github.io/Rdatasets/doc/ggplot2/movies.html) dataset.)
+
+## Analysis
+
+The original data set collected contained many movies where the budget was not available or not known. The original length of the data set was `r length(movies$rating)` but after filtering those out, it was reduced to `r length(MoviesII$rating)`. This was a large cut, but I was still left with a considerable size to work with.   
+
+```{r}
+
+plot(rating ~ Rbudget, data=MoviesII, xlab = "US Dollars in millions", main = "Ratings by Budget", ylab = "Rating from 1 - 10", col = "deepskyblue3", pch = 20)
+```
+
+This scatter plot shows the correlation between a movie's budget and its rating. Based on this plot alone we see that there are many movies that are below 50 million US Dollars that are receiving both high and low ratings. Most of the movies above 50 million are between a rating of 5 and 9. 
+
+
+```{r}
+par(mfrow=c(1,2))
+hist(MoviesII$Rbudget, xlab = "Budget in millions US Dollars", ylab = "Frequency", main = "Histogram of Budget", col = "deepskyblue3")
+hist(MoviesII$rating, ylab = "Frequency", main = "Histogram of Ratings", xlab = "Ratings from 1 - 10", col = "deepskyblue3", xlim = c(0,10))
+```
+
+|Type   | Min  | 1st Quartile | Median     |Mean        | 3rd Quartile | Max        |
+|-------|------|--------------|------------|------------|--------------|------------| 
+|Budget | 0    | 250,000      |  3,000,000 | 13,412,513 |15,000,000    |200,000,000 |
+|Rating | 1.0  | 5.2          | 6.3        |6.141       |7.2           |10          |
+
+The histograms and the summary table above support my findings from the scatter plot. 50% of the budgets are between 250,000 and 15,000,000, a relatively low budget when compared to Titanic and Spider-Man 2, who's budget was 200,000,000. 
+
+The scatter plot of ratings shows that 50% of the movies score between 5.2 and 7.2, and the plot shows that a good portion of those are coming from movies with lower production budgets.
+
+For more specific examples a table is given below of a few movies with low and high budgets that achieved high ratings.  
+
+|Movie                           | Budget     | Rating |
+|--------------------------------|------------|--------|
+|Troy (2004)                     |185000000   |7.1     |
+|Pirates of the Caribbean (2003) |125000000   |8.0     |
+|Lord of the Rings (2003)        |94000000    |9.0     |
+|Anyone (2004)                   |1000        |9.6     |
+|Cultivision (Collapsing Stars)  |1000        |8.4     |
+|Writer's Block (2003)           |1200        |7.2     |
+
+  
+
+
+## Interpretation 
+
+It is easy to see the higher budgets will not always be the reason for a higher rating. There are many movies with low budgets receiving high scores. However, there is a trend that suggests that high budget movies are more likely to be receiving a rating close to the mean, and low budget movies are more spread out in their ratings.  
+
+There are limitations to this analysis. The data does not show whether the production actually stayed within the budget. Inflation and rising costs of new technology naturally gives rise higher budgets so comparing an older movie to a newer could be unfair. The ratings could also be affected in many ways, such as the competition at the time of release or how well the movie was advertised. 
+
+This analysis shows that a high budget can help to improve the movie's rating, but it also demonstrates that the budget can't guarantee or predict it. Other factors involved must be considered, such as advertising, the production company itself, writers, or actors' talents. 

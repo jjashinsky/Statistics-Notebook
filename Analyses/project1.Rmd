@@ -1,0 +1,213 @@
+---
+title: "Great Harvest Analysis"
+output: 
+  html_document:
+    theme: cerulean
+    code_folding: hide
+---
+
+<script type="text/javascript">
+ function showhide(id) {
+    var e = document.getElementById(id);
+    e.style.display = (e.style.display == 'block') ? 'none' : 'block';
+ }
+</script>
+
+```{r, include=FALSE}
+library(mosaic)
+library(pander)
+library(DT)
+library(car)
+GHB <- read.csv("../Data/GHBread.csv", header=TRUE)
+GHSW <- read.csv("../Data/GHSweet.csv", header=TRUE)
+GHSD <- read.csv("../Data/GHSandwich.csv", header=TRUE)
+```
+
+### Background
+
+A great challenge in owning a bakery is predicting customer's purchasing habits, especially because breads and sweets have such a short life style. Statistics may prove helpful in showing weekly trends.
+
+This analysis looks at the distribution of different types of items sold each week. Ten weeks of purchases were randomly selected from the beginning of the year to the present. Considering that the store is often changing and improving, it seemed best to search for more recent trends in the data. 
+
+## {.tabset .tabset-fade .tabset-pills}
+
+### Yeast Breads
+
+----
+
+#### Hypothesis of Yeast Bread
+
+A main reason people come to Great Harvest is buy loafs of bread. While bread is baked daily, it could be useful to know the weekly averages of each type of breads sold, and whether one bread is more popular than the other. It is important to note that only yeast breads were considered and gluten free and seasonal breads were not considered. 
+
+A formal null hypothesis is that all means of breads sold are equal to each other while the alternative is that at least one mean is significantly different than the other. Also written as: 
+
+$$
+H_0: \text{= All samples represent a sample of data from the same distribution}
+$$
+$$
+H_a: \text{= At least one distribution is stochastically different than the others}
+$$
+
+Our level significance will be $\alpha = 0.05$
+
+<a href="javascript:showhide('long')">The Data of Breads Sold Each Week<span style="font-size:8pt;">(click to view)</span></a>
+
+
+<div id="long" style="display:none;">
+```{r}
+knitr::kable(GHB)
+```
+
+</div>
+
+
+#### Analysis of Yeast Bread
+
+Below is a graph of the distributions of breads sold. The black line represents the median and the box represents 50% of the present data. 
+```{r}
+ggplot(data=GHB, aes(x = Bread, fill = Bread)) +
+  geom_boxplot(aes(y = Count)) +
+  ggtitle("Yeast Breads Sold Each Week") +
+  ylab("Total Items Sold Each Week For 10 Weeks") +
+  xlab("Types of Yeast Breads") +
+  theme(axis.text.x=element_blank(),
+        plot.title = element_text(hjust = .5))
+```
+
+The graph shows that on average the store will sell more cinnamon burst than any other bread. The only bread that comes close is honey wheat. The summary of this graph along with other statistics can be seen in the table below. 
+
+```{r}
+pander(favstats(Count ~ Bread, data=GHB))
+```
+
+A Kruskal-Wallis test was done with the different types of bread as cofactors.  The results are shown in the table below.
+
+```{r}
+pander(kruskal.test(Count ~ Bread, data=GHB))
+```
+
+The p-value is 3.122e-13 which is below the level of significance of 0.05. This means that one of the breads is stochastically different, or another interpretation is that the mean of cinnamon burst is higher than the others. 
+
+#### Interpretation 
+
+It is interesting to see that the minimum amount of cinnamon burst bread sold in one week was 83. While the highest recorded is 358. This was likely because of a large special order in that week. Since this a large outlier it will skew the mean. 
+
+Therefore the median of 111 would be more helpful as an average than the mean. 111 divided by 6 (the number of days the store is open) is 18.5. This means that the store should expect to sell around 18.5 loafs of cinnamon burst each business day. 
+
+However the standard deviation is also the largest, likely because of the outlier, therefore this bread has a lot of variability to it. This bread is the least consistent out of all the others. All of other breads have a tight distribution. There is a lot of consistency in the number of breads sold each week.
+
+----
+
+### Sweets
+
+----
+
+#### Hypothesis of Sweets
+
+Considering that some sweets can be prepared in advance, such as cookie dough, it would be helpful to know the average number of items sold each week so that the store could be more prepared. Some of the more seasonal sweets were left out.
+
+Our hypothesis for the sweets will be the same as the breads.
+
+$$
+H_0: \text{= All samples represent a sample of data from the same distribution}
+$$
+$$
+H_a: \text{= At least one distribution is stochastically different than the others}
+$$
+
+<a href="javascript:showhide('long')">The Data of Breads Sold Each Week<span style="font-size:8pt;">(click to view)</span></a>
+
+
+<div id="long" style="display:none;">
+```{r}
+knitr::kable(GHSW)
+```
+
+</div>
+
+
+#### Analysis of Sweets
+
+The graph below shows the distribution of the different sweets. This graph is much more spaced out than the box plot for breads. Here the top three are the cinnanyms, cookies and cinnamon rolls. 
+
+```{r}
+ggplot(data=GHSW, aes(x = Sweets, fill = Sweets)) +
+  geom_boxplot(aes(y = Count)) +
+  ggtitle("Sweets Sold Each Week") +
+  ylab("Total Items Sold Each Week For 10 Weeks") +
+  xlab("Types of Sweets") +
+  theme(axis.text.x=element_blank(),
+        plot.title = element_text(hjust = .5))
+```
+
+The table below gives more details as to each type of item.
+
+```{r}
+pander(favstats(Count ~ Sweets, data=GHSW))
+```
+
+To confirm the trends in the graph a Kruskal-Wallis test was done for types of sweets. The results are shown below. 
+
+```{r}
+pander(kruskal.test(Count ~ Sweets, data=GHSW))
+```
+
+#### Interpretation 
+
+The p-value is much lower than 0.05, which shows that at least one of these distributions are not the same, and the graph shows that there is more than one.
+
+The average number of cinnamon rolls, including the ones sold as 6, sold each week is 162.4. Which is about 27 each day. Considering that each batch usually yields around 18 to 24 (depending on who makes them for the day), shows that the bakery might want to consider increasing the amount made each day, or at least on busier days. 
+
+The average number of cookies, including the 3 pack and 6 pack is about 86.6, which is about 14.4. The usual number baked each day is around 18. More could be done to advertise the cookies to close the gap and increase sales. 
+
+The same could be said about the cinnanyms. Each week around 185.6 cinnanyms are sold but 216 are made each week. While this is good, perhaps advertising them as a package of 6 would help to increase the number sold. 
+
+----
+
+### Sandwiches
+
+----
+
+#### Hypothesis of Sandwiches
+
+The hypothesis for the types of sandwiches will be same as the other two.  
+
+$$
+H_0: \text{= All samples represent a sample of data from the same distribution}
+$$
+$$
+H_a: \text{= At least one distribution is stochastically different than the others}
+$$
+
+#### Analysis of Sandwiches
+
+```{r}
+ggplot(data=GHSD, aes(x = Sandwich, fill = Sandwich)) +
+  geom_boxplot(aes(y = Count)) +
+  ggtitle("Sandwiches Sold Each Week") +
+  ylab("Total Items Sold Each Week For 10 Weeks") +
+  xlab("Types of Sandwiches") +
+  theme(axis.text.x=element_blank(),
+        plot.title = element_text(hjust = .5))
+```
+
+The plot above seems very instructive. The top two selling sandwiches are the Baja and Turkey Pesto. The plot also shows a lot of spread or variability in the number sold. More details can be seen in the table below. 
+
+```{r}
+pander(favstats(Count ~ Sandwich, data=GHSD))
+```
+
+```{r}
+pander(kruskal.test(Count ~ Sandwich, data=GHSD))
+```
+
+A Kruskal-Wallis test confirms our alternative hypothesis with a significantly low p-value. At least one the distributions are stochastically different from the others. In this case the Turkey Pesto and Baja are clearly higher than the others. All others appear to be more closely related in distribution. 
+
+#### Interpretation 
+
+It is often asked by customers to the workers which is their favorite sandwich. The oft repeated answer is the Pesto and Baja. These results confirm their statements. 
+
+There is some error in this estimations. The Eggcellent and Egg Bacon Cheddar sandwiches were only added to the menu in the past few months. This will skew the mean toward the lower ends. The same could be said about the Dealio, and 1/2 Cafe Sandwich. There is also some trouble with the fact that the Dealio and the $5 and 1/2 Cafe Sandwich do not specify which sandwich was bought.
+
+----
+

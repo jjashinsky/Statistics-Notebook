@@ -1,0 +1,138 @@
+---
+title: "Rail Trail t Test"
+output: 
+  html_document:
+    theme: spacelab
+    code_folding: hide
+---
+
+```{r, include=FALSE}
+library(mosaic)
+library(DT)
+library(car)
+```
+
+<!-- Instructions
+
+1. Use the RailTrail dataset in R to come up with a question that can be answered with a t Test. 
+
+2. Establish why the question is interesting and rephrase the question using a statistical "null" and "alternative" hypothesis.
+
+3. Clearly answer your question using statistics. Be sure to compute a p-value and provide supporting numerical and graphical summaries.
+
+For details about the RailTrail dataset type the command:
+  > ?RailTrail 
+into your Console and study the help file that appears. Also, if you want extra information, browse this document that has images and further details:
+http://www.northamptonma.gov/DocumentCenter/View/5244   
+
+
+Note: you can create "groups" from the data in many ways. For example, you can create a variable in your RailTrail dataset that is called "rain" and has categories of "yes" and "no" with the code:
+-->
+
+```{r}
+RailTrail$rain <- ifelse(RailTrail$precip > 0, "yes", "no")
+norain <- (subset(RailTrail, rain =="no"))
+rain <- (subset(RailTrail, rain =="yes"))
+```
+
+### Background
+
+In Florence of Massachusetts a rail trail was surveyed for the purpose finding the amount of daily users. The questioned posed is: Does the daily precipitation affect the traffic of the rail trails? This could prove useful because if the city knows that they should expect less traffic from cars on the streets in the summer/spring and less in the fall/winter, then they can plan accordingly. 
+
+Surveying was done from April 5, 2005 to November 15, 2005. 90 days were recorded. Other observations made besides volume of users included: temperature (Fahrenheit), season, cloud cover, and precipitation. A sample of the first six in data set of precipitation and volume only are shown below. 
+
+|Precipitation |Volume|
+|--------------|------|
+|0.00          |501   |
+|0.29          |419   |
+|0.32          |397   |
+|0.00          |385   |
+|0.14          |200   |
+|0.02          |375   | 
+
+
+### Hypothesis 
+ 
+We are interested in knowing if there are more users on the trail during days with no precipitation. Our Null and alternative hypothesis is as follows:
+
+$$
+H_0 : \mu_1 - \mu_2 = 0
+$$
+$$
+H_a : \mu_1 - \mu_2 > 0
+$$
+where, 
+
+$\mu_1$ = {mean of volume during days without precipitation} 
+
+$\mu_2$ = {mean of volume during days with precipitation} 
+
+And our level of significance will be
+$$
+\alpha = 0.05
+$$
+
+### Analysis
+
+The number of days where there was a measurable amount of precipitation is 29, and the number of days with no amount of precipitation is 61. 
+
+Since the amount of observations aren't very large, particularly for days with precipitation, a check for normality through QQ-plots would prove helpful. 
+
+```{r}
+par(mfrow=c(1,2))
+qqPlot(rain$volume, main = "QQ-plot of days with Precip.", ylab = "Number of Rail Trail Users", pch=19)
+qqPlot(norain$volume, main = "QQ-plot of days with no Precip.", ylab = "Number of Rail Trail Users", pch=19)
+
+```
+
+We can see that the QQ-plot shows that the data for days with and without precipitation is normally distributed. With this we can assume that the parent population is normally distributed as well, proving that it would be appropriate for us to continue with our independent sample t-test.
+
+Below are the box plots of the two types of data sets along with a table summarizing the sample statistics.  
+
+```{r}
+boxplot(volume ~ rain, data = RailTrail, col=c("tomato1", "firebrick1"), main = "Boxplot of Trail Users", ylab = "Number of Trail Users", names = c("No Precip", "Precip"))
+```
+
+|Precip. | Min  | Q1   | Median   | Q3    | Max    | Mean    | $\sigma$ | Sample Size|
+|--------|------|------|----------|-------|--------|---------|---------|------------|
+|No      |156   | 335  | 411      | 484   | 736    | 410.48  | 120.16  | 61         |
+|Yes     | 129  |189   |314       | 397   |507     |301.62   |111.29   | 29         |
+
+```{r, include=FALSE}
+t.test(volume ~ rain, data = RailTrail, mu = 0, alternative = "greater", conf.level = 0.95)
+```
+
+There appears to be a noticeable difference between the two groups. To further confirm the observations the independent t-Test results are shown below. 
+
+
+| Test Statistic |  df   |  $p$-value   | Alternative Hypothesis |
+|----------------|-------|--------------|-----------------------|
+|  t = 4.225     | 59.156|  4.185e-05   |   Greater             |
+
+Comparing our $p$-value to $\alpha$ we get:
+$$
+(p = 0.000042 < \alpha)
+$$
+We see that test statistic is quite high, suggesting that there is sufficient evidence to reject the null hypothesis. This is further confirmed when comparing the p-value to the chosen alpha. 
+
+
+### Interpretation 
+
+The evidence from the graphical summary and t-test support the alternative hypothesis, in that the rail trail receives more traffic from users when there is no precipitation. Suggesting that the city might see an influx of traffic on the streets, because there are less people walking or biking.  
+
+However conclusive this study was it lacks detail. To provide more affirmative information to this question, the analysis could be expanded to include temperature, cloud cover, varying amounts of precipitation, and weekend vs. weekday. Perhaps it is known that the trails are not safe during heavy rain, and maybe something could be done to help with water flow. There may be more significant factors at play here than just precipitation.  
+
+
+---
+
+Source:
+
+Pioneer Valley Planning Commission
+
+References:
+
+(http://www.northamptonma.gov/DocumentCenter/View/5244)
+
+
+
+

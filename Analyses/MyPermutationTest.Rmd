@@ -1,0 +1,192 @@
+---
+title: "Permutation Test"
+output: 
+  html_document:
+    theme: yeti
+    code_folding: hide
+---
+```{r, include=FALSE}
+library(plotrix)
+library(mosaic)
+library(pander)
+library(DT)
+
+points <- c(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 13000, 14000, 15000, 16000, 17000, 18000, 19000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000)
+comp.time <- c(.1488, .1417, .1784, .1611, .1871, .2145, .2431, .2663, .2907, .4133, .3504, .3721, .3974, .4311, .4636, .4947, .5037, .5335, .5620, .5838, .8088, 1.0570, 1.3399, 1.8432, 1.8150, 2.0642, 2.2960, 2.7075)
+time <- data.frame(points,comp.time)
+```
+
+<script type="text/javascript">
+ function showhide(id) {
+    var e = document.getElementById(id);
+    e.style.display = (e.style.display == 'block') ? 'none' : 'block';
+ }
+</script>
+
+
+### Background
+
+----
+
+In a previous analysis a study was conducted to determine if there exists a linear relationship between the number of computations and the amount of time it takes for a computer to compute it. 
+
+The analysis used a linear regression test but it was unfortunately inappropriate to run the test due to the failed assumptions. This analysis will use the same work used previously but a permutation test will be used instead. 
+
+The power of the permutation test is that no assumptions need to be satisfied. This will certainly be more appropriate than a linear regression test alone. 
+
+To find more information of the study, including the results of the linear regression, click on the link below.  
+ 
+<a href="javascript:showhide('abstract')">Details of the linear regression analysis<span style="font-size:8pt;">&nbsp;(click to view)</span></a>
+
+<div id="abstract" style="display:none;">
+
+<div style="color:#a8a8a8;">
+This background is quoted directly from the document ["Simple Linear Regression"](MysimpleLinearRegression.html). 
+</div>
+
+<div style="padding-left:30px; padding-right:30px;">
+
+The function `monte.carlo.pi(n)` was used, where n is any desired number of points. (Press on the code button below to view how this function was defined) The goal of the function is to show that random probability can be used to estimate pi. It does this by randomly plotting n number of points in a square with a circle circumscribed within the square. Some points happen to land outside the circle and some land inside the circle. 
+
+A ratio of the points inside the circle to the total points should be approximately equal to the ratio of the area of the circle to the area of the square. After some simplification of algebra we can see rewrite the ratio as,  
+
+$$
+\pi \approx 4\times ( \, \frac{\text{Number of Points in Circle}}{\text{Number of Points in the Square}}  ) \,
+$$
+The function will determine the number of points within the circle and divide it by the total number of points, n, and then multiply it by 4. This will approximate $\pi$. 
+
+An example of this graphic and the function's output is shown below.
+
+----
+```{r}
+monte.carlo.pi<-function(n)
+{
+  start.time <- Sys.time()
+  circle.points<-0
+  square.points<-0
+  x<-runif(n,0,1)
+  y<-runif(n,0,1)
+  z<-rep(0, n)
+  for (i in 1:n)
+  {
+    if ((x[i]-.5)^2 + (y[i]-.5)^2 <=.5^2)
+    {
+      circle.points<-circle.points+1
+      square.points<-square.points+1
+      z[i]<-1
+    } else
+    {
+      square.points<-square.points+1
+    }
+  }
+  plot.new()
+  frame()
+  plot(x,y,asp=1,xlim=c(0,1),ylim=c(0,1), pch=16, col=(c("blue","green")[as.factor(z)]), cex = 4/log(n))
+  draw.circle(0.5,0.5,1/2,nv=1000,border=NULL,col=NA,lty=1,lwd=1)
+  rect(0,0,1,1)
+  cat("Estimate of pi: ", 4.0 * circle.points / square.points,"\n")
+  cat("Computed in:    ", Sys.time() - start.time, "sec\n")
+  #return()
+}
+
+monte.carlo.pi(1000)
+```
+----
+
+The function also keeps track of how much time it takes to run through all of the code. **Generally speaking, as the number of points used in the function increases the computation time will also increase**. 
+
+My question is whether there exists a linear relationship between number of points and computation time. I will not be looking at the actual calculation of the monte.carlo.pi function or the accuracy of the estimation. The only variables this analysis will look at is the relationship between the number of points used and the speed at which $\pi$ was estimated.  
+
+A sample of 20 computations was done starting at 1,000 points with 1,000 increments. After reaching 20,000 the increments increased to 10,000 until 100,000 points were reached. The final sample size is 28. Each number was rounded to four decimals. 
+
+```{R}
+mylm <- lm(comp.time ~ points, data=time)
+pander(summary(mylm))
+```
+
+</div>
+
+</div>
+
+
+### Hypothesis
+
+----
+
+The analysis will only look at the slope of the linear line, therefore the hypothesis is written as thus,
+
+$$
+H_0: \beta_1=0
+$$
+
+$$
+H_a: \beta_1 \neq 0
+$$
+$$
+\alpha = 0.05
+$$
+
+### Analysis 
+
+----
+
+Below is a graph taken from the original analysis. It shows a good linear line that follows most of the points except a few. 
+ 
+```{r}
+ggplot(data = time, aes(x = points, y = comp.time)) + 
+  geom_point(color='black') +
+  geom_smooth(method = "lm", se = FALSE, color="red") +
+  xlab("Number of Points used in estimation") +
+  ylab("Computation time (seconds)") +
+  ggtitle("Linear Relationship of points and Computation Time")
+```
+
+A permutation test was conducted with 2,000 replications. A distribution of the 2,000 test statistics are shown in the histogram below. 
+
+```{R}
+set.seed(121)
+
+# Finding the t of the linear regression test 
+myTest <- lm(comp.time ~ points, data = time)
+observedTestStat <- summary(myTest)[[4]][2,3]
+
+# re-creating 2000 t-scores
+N <- 2000
+permutedTestStats <- rep(NA, N)
+for (i in 1:N){
+  permutedData <- sample(time$comp.time)
+  permutedTest <- lm(permutedData ~ points, data = time)
+  permutedTestStats[i] <- summary(permutedTest)[[4]][2,3]
+}
+
+# Here the histogram of the distribution of the test statistics
+hist(permutedTestStats, col=rgb(1,0,.1, .6), freq = FALSE, main="Density Plot of the Permuted Test Statistics")
+abline(v = observedTestStat, col = "red", lwd = 3)
+
+```
+
+The test statistic from the non-permuted data produced a t-score of 65.44. Considering the test statistic was so high the p-value is less than 0.05. Thus the null hypothesis can be safely **rejected** and **conclude with the alternative hypothesis**.   
+
+
+### Interpretation 
+
+----
+
+The permutation test was successful in answering the question as to whether $\beta_1 = 0$. The results of the study show that the $\beta_1 \neq 0$. There is a linear relationship between the number of points used in the program and the amount it takes to compute it. The results from the previous work show that the estimated slope is 2.56e-05. In other words, for every increase in 100,000 points the computation time is expected to increase by 2.56 seconds. 
+
+The distribution of the density plot is right skewed. This could be because of the small smample size used. One way to achieve a more normal distribution is to increase the sample size. 
+
+----
+
+Source
+
+J. Jashinsky, Simple Linear Regression, (11/2017) 
+
+
+
+
+
+
+
+
+

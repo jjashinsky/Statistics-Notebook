@@ -1,0 +1,145 @@
+---
+title: "Math Tutoring Appointments"
+output: 
+  html_document: 
+    theme: yeti
+    code_folding: hide
+---
+```{r, include=FALSE}
+library(pander)
+library(mosaic)
+library(RColorBrewer)
+library(plyr)
+```
+
+```{r, include=FALSE}
+## Reading in the file
+tutoring <- read.csv("../Data/AppointmentReport.csv", header=TRUE)
+View(tutoring)
+
+## Filtering out evrything but 1on1 appoint.
+tutoring2 <- subset(tutoring, SlotType == "OneToOne")
+
+##Changing the term "Check In" to "Attended"
+tutoring2$Status <- gsub("Check In", "Attended", tutoring2$Status)
+
+## creating the table
+TutoringTable <- table(tutoring2$StudentType, tutoring2$Status)
+View(tutoring2)
+```
+
+## Background
+
+----
+
+In the math tutoring department at BYUI there are two types of one on one appointments, On Campus and Online. These appointments have four types of statuses, Attended, Cancelled, Missed, and Unresolved.
+
+Please note that the original data set contains all of the one on one tutoring appointments from the beginning of the 2017 Fall semester up to December 8, 2017 (the day the data was collected). The BYUI Pathway students were not considered.  
+
+Also, the term Attended was used if the tutor checked in the student, whereas Check In was used if the student checked in. Since they are considered to be exact same event, both counts were grouped only under Attended. 
+
+
+## Hypothesis
+
+----
+
+The goal of this analysis is to determine if the appointment status is independent of the type of student. Therefore, a chi-square test will be the best statistical test for this type of qualitative data. A formal null and alternative hypothesis is written out as thus,   
+
+$$
+H_0: \text{Student type and appointment status are independent}
+$$
+
+$$
+H_a: \text{Student type and appointment status are not independent}
+$$
+
+$$
+\alpha = 0.05
+$$
+
+
+
+## Analysis
+
+----
+
+The results of the chi-square test are shown in the table below.
+
+```{r}
+## the chi-square test
+tutoring.chisq <- chisq.test(TutoringTable)
+
+## showing the results in table 
+pander(tutoring.chisq)
+```
+
+The test gives a F score of 73.66 which produces a p-value < 0.05. Therefore the null hypothesis can be **rejected**. This analysis will **conclude with the alternative**.
+
+The graphs and tables below show a visual of the data and the expected counts from the chi-square test. 
+
+```{r}
+## places the graphs besides each other. 
+par(mfrow=c(1,2))
+
+## actaul observation histogram. The table is transposed for easier interpretation 
+barplot(t(TutoringTable), beside=TRUE, legend.text = TRUE, args.legend = list(x="topright", bty="n"), col=brewer.pal(4,"PuBu"), ylab="Frequency", main="Actual Observations")
+
+## expected histogram. The table is transposed for easier interpretation
+barplot(t(tutoring.chisq$expected), beside=TRUE, legend.text = TRUE, args.legend = list(x="topright", bty="n"), col=brewer.pal(4,"PuRd"), ylab="Frequency", main="Expected Counts")
+```
+
+
+<table>
+<tr>
+<td> 
+
+```{r}
+## actual observations table
+pander(TutoringTable, caption="Actual Observations")
+```
+
+</td>
+<td>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+</td>
+<td>
+
+```{r}
+## expected count table
+pander(tutoring.chisq$expected, caption="Expected Counts")
+```
+
+</td>
+</tr>
+</table>
+
+#### Checking Assumptions
+
+The expected count table above shows that each cell is greater than 5. This meets the assumptions of Chi-square test. Therefore the p-value is meaningful and can be trusted.  
+
+## Interpretation 
+
+----
+
+Below is a table of the residuals of the Chi-square test. 
+
+```{r}
+## chi-square residuals table
+pander(tutoring.chisq$residuals, caption="Pearson's Residuals")
+```
+
+Looking at the residuals it can be seen that online students cancelled more appointments than what was expected and there were less attended and unresolved appointments than was expected. This means that the online students have a higher proportion of cancelled appointments when compared to the on campus students. 
+
+The observed proportion of attending an appointment over total appointments for an on campus student is 0.6145 and 0.5092 for an online student. There could be many reasons for this lower proportion. An online student may be very used to the freedom and flexibility of an online class and they may be signing up for these appointments with that flexible mindset. 
+
+Perhaps if the tutor made more attempts to make a connection with the online student through texting, calling or emails, then the student may feel more obliged or comfortable to keep appointments. If an online student can see the tutor as more of a peer than just a delivery of answers, then they may feel more accountable for their learning. This may lead to other positive experiences during the actual meeting. As stated in *Basics of Math Education* (35), "If there is an increase in the level of positive relationship between the teacher and the student, then learning will increase." 
+ 
+The proportion of unresolved appointments for online students is 0.002 while for on campus the proportion is 0.024. A surprising ten percent difference, considering that every tutor is instructed during their training to resolve every appointment status and the process is the same for both types of students. Those tutors who teach more online appointments seem to perform better in this particular area. This could be because the tutor might not be reminding the on campus students to check in, whereas, the tutor must mark attendance for the online student.
+
+It might be best to remind tutors of their responsibilities to resolve the status of these appointments, especially during the GS 108 class and the all tutor meetings. Email could possibly be another form of comunication.    
+
+Because Pathway students are a huge part of the online interactions of the math tutoring department further studies could possibly include that data to get a better look at the behaviors of the online students.  
+
+----
+
+Special thanks to Daniel Baird and Stephan O'Shaughnessy for providing the data and the opportunity. 

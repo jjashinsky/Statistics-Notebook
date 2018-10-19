@@ -1,0 +1,147 @@
+---
+title: "My Simple Logistic Regression"
+output: 
+  html_document:
+    theme: yeti
+    code_folding: hide
+---
+
+<script type="text/javascript">
+ function showhide(id) {
+    var e = document.getElementById(id);
+    e.style.display = (e.style.display == 'block') ? 'none' : 'block';
+ }
+</script>
+
+```{r, include=FALSE}
+library(mosaic)
+library(ResourceSelection) 
+library(car)
+library(pander)
+library(plyr)
+library(DT)
+```
+
+
+### Background 
+
+<a href="javascript:showhide('abstract')">Details of the Infertility Study<span style="font-size:8pt;">&nbsp;(click to view)</span></a>
+
+<div id="abstract" style="display:none;">
+
+<div style="color:#a8a8a8;">
+This background is quoted directly from the article ["INDUCED ABORTION AND SECONDARY INFERTILITY "](https://pdfs.semanticscholar.org/8087/6668e6e7487818f250688506eba558b0fa43.pdf). 
+ The source is shown at the end of this analysis.</div>
+
+<div style="padding-left:30px; padding-right:30px;">
+
+The role of induced (and spontaneous) abortions in the aetiology of secondary
+sterility was investigated. Obstetric and gynaecologic histories were obtained from
+100 women with secondary infertility admitted to the First Department of Obstetrics
+and Gynaecology of the University of Athens Medical School and to the Division
+of Fertility and Sterility of that Department. For every patient, an attempt was
+made to find two healthy control subjects from the same hospital with matching
+for age, parity, and level of education. Two control subjects each were found for 83 of
+the index patients. 
+
+</div>
+
+</div>
+
+<a href="javascript:showhide('long')">The Data <span style="font-size:8pt;">(click to view)</span></a>
+
+
+<div id="long" style="display:none;">
+**Press the code button if the data does not automatically appear.**
+```{r}
+datatable(infert, options=list(lengthMenu = c(10,30)))
+```
+
+</div>
+----
+
+Previous studies have been done to see if spontaneous or induced abortions have any influence in causing secondary infertility. However, this analysis will look at whether parity can be used to predict secondary infertility. 
+
+Parity is when a woman carries a fetus to a point where the baby has an equal chance of living inside or outside the womb. Women who have previously given birth but are now struggling to get pregnant or to carry a baby to term have secondary infertility.  
+
+Depending on the results we can either help to rule out parity as a factor or lead to a better understanding of secondary infertility.  
+
+In the data the secondary infertility will be under the column called `case`, where 1 indicates those who have it while 0 are the control subjects.  
+
+----
+
+### Hypothesis 
+
+Presently, it is assumed that a logistic regression is a good fit for the data, and this will be checked after the results. 
+
+Also the null hypothesis will be that the slope of the curve is equal to zero while the alternative is that slope does not equal zero. Formally written as, 
+
+$$
+H_0: \beta_1 = 0
+$$
+
+$$
+H_a: \beta_1 \neq 0
+$$
+$$
+\alpha = 0.05
+$$
+
+----
+
+### Analysis 
+
+The model of the logistic regression is expressed as thus: 
+
+$$
+  P(Y_i = 1|\, x_i) = \frac{e^{\beta_0 + \beta_1 x_i}}{1+e^{\beta_0 + \beta_1 x_i}} = \pi_i
+$$
+given that, 
+
+$$
+Y_i=\text{Individual females}
+$$
+$$
+x_i=\text{Parity count (number of previous pregnancies)}
+$$
+This can be interpreted as, given a specific parity count the probability of a women having secondary infertility, (i.e. $Y_i=1$), is equal to $\pi_i$ 
+
+Below is the results of the logistic regression test. 
+
+```{r, warning=FALSE}
+infert.glm <-glm(case==1 ~ parity, data=infert, family=binomial)
+pander(summary(infert.glm))
+```
+
+----
+
+Comparing the slope p-value to the level of significance, $.8884 > 0.05$, clearly shows that there is **not sufficient evidence to reject the null**. The slope of the logistic curve is equal to zero. 
+
+Because there are many repeating values the Deviance Goodness of Fit test was used in favor over the Hosmer-Lemeshow Goodness of Fit test. This test allows us to test the assumption that a logistic regression is a model for the data. The test results in a p-value of 0.001677. Considering the p-value is very small the assumption of a good fit is **rejected**. Considering that this proves that a logistic regression was not appropriate, the p-value from the logistic regression test cannot be trusted.  
+
+
+```{r}
+b <- infert.glm$coefficients
+plot(case==1 ~ parity, data=infert, pch=16, col=rgb(1,0,0,.05), main="Secondary Infertility in relation to Parity Count", xlab="Parity Count", ylab="Probability of 2nd Infertility")
+curve(exp(b[1]+b[2]*x)/(1+exp(b[1]+b[2]*x)), add=TRUE, col="red")
+```
+
+Because the data is overlapping with each other the more shaded dots indicate a greater frequency in data points. This shows that there are many repeated values and a good majority of the values are on the lower end for both cases. 
+
+Whether a woman has several or few parities seems to have no relation to their secondary infertility. 
+
+----
+
+### Interpretation  
+
+The analysis above makes for a tough interpretation, and some of this could certainly be refuted on the basis of a high p-value and that logistic regression was not appropriate. Presently, the test could show that parity is not a significant contributor. Stated in other words, an increase in parity count does not lead to a change in probability of experiencing secondary infertility.  
+
+It may be of some influence but there is likely a much more significant cause here. More research should be done in other factors of infertility which should help to narrow down other alternatives.  
+
+The analysis could be expanded to a multiple logistic regression and include factors such as number of abortions, which is already in the data set and possibly medications they commonly used. 
+
+----
+
+Source
+
+Trichopoulos et al (1976) Br. J. of Obst. and Gynaec. 83, 645–650.

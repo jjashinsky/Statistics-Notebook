@@ -1,0 +1,133 @@
+---
+title: "Discrimination"
+output: 
+  html_document: 
+    theme: cerulean
+    code_folding: hide
+---
+```{r, include=FALSE}
+library(pander)
+library(mosaic)
+library(car)
+library(ggplot2)
+library(RColorBrewer)
+library(reshape2)
+
+```
+
+### Background
+
+Sometime around 1965 a survey was conducted where students at a certain university were asked the following question. "Do you think that some racial and religious groups should be prevented from living in certain sections of cities?" A summary of their response are recorded in the following table. The region of the United States that the student respondent was from was also recorded.
+
+<div style="padding-left:20%; padding-right:20%;">
+
+| Region | *Agree* | *Undecided* | *Disagree* |
+|--------|---------|-------------|------------|
+| East   |  89     |  79         |  297       |
+| Midwest| 118     | 130         |  350       |
+| South  | 241     | 140         |  248       |
+| West   |  37     |  59         |  197       |
+
+</div>
+
+
+```{r}
+discrim <- matrix(c(89,79,297,118,130,350,241,140,248,37,59,197), ncol = 3, byrow = T)
+colnames(discrim) <- c("Agree","Undecided","Disagree")
+rownames(discrim) <- c("East","Midwest","South","West")
+```
+
+----
+
+### Hypothesis
+
+The question is whether an individual's attitude towards diversity is independent of the region they are from. To answer the question a Chi-Square test will be done. Our formal hypothesis will be written as thus:
+
+$$
+H_0: \text{regions and decisions are independent}
+$$
+$$
+H_a: \text{regions and decisions are not independent}
+$$
+$$
+\alpha = 0.05
+$$
+
+----
+
+### Analysis
+
+The results below summarize the results of the Chi-Square test.
+
+```{r}
+discrim.chisq <- chisq.test(discrim)
+pander(discrim.chisq)
+```
+
+Clearly the p-value is far below the level of significance, 1.476e-24 < 0.05. Therefore the null hypothesis is **rejected**, and we conclude with the alternative. There is sufficient evidence to believe that region and decision are **not independent**. 
+
+This means that it should be expected that the counts of each decisions will be different for each region. This can be confirmed in the comparisons of the graphs below. 
+
+The left graph shows the student's responses to the question, "Do you think that some racial and religious groups should be prevented from living in certain sections of cities?". The options being A for agree, U for undecided, and D for disagree. The graph on the right shows estimated expected count, given the null was true.
+
+<div style="padding-left:7%; padding-right:7%;">
+
+```{r}
+par(mfrow=c(1,2))
+
+barplot(discrim, beside=TRUE, legend.text = TRUE, args.legend = list(x="topleft", bty="n"), col=brewer.pal(4,"PuBu"), main="Actual Observations", ylab="Count of Surveyed University Students", xlab="Decision", names=c("A", "U", "D"))
+
+barplot(discrim.chisq$expected, beside=TRUE, legend.text = TRUE, args.legend = list(x="topleft", bty="n"), col=brewer.pal(4,"PuRd"), main="Expected Counts", ylab="Count of Surveyed University Students", xlab="Decision", names=c("A", "U", "D"))
+```
+
+</div>
+
+----
+
+### Interpretation 
+
+Since it is now known that that region and discussion are associated the Pearson's residuals will be useful in the interpretation. The table of residuals is shown in the table below on the far right. The observed counts and expected counts are also shown for quick comparisons.  
+
+<table>
+<tr>
+<td> 
+
+```{r}
+pander(discrim, caption="Actual Observations")
+```
+
+</td>
+<td>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+</td>
+<td>
+
+```{r}
+pander(discrim.chisq$expected, caption="Expected Counts")
+```
+
+</td>
+<td>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+</td>
+<td>
+
+```{r}
+pander(discrim.chisq$residuals, caption="Pearson's Residuals")
+```
+
+
+</td>
+</tr>
+</table>
+
+The expected count table does show that each expected count is greater than 5. This satisfies the assumptions of the Chi-square test. Therefore confidence can be placed in the results of this test.  
+
+The residuals show that the southern university students agreed with the survey question far more than was expected. Similarly, they disagreed far less than expected.
+
+It appears that each region was close to the expected count in the undecided decision, and it was the agree and disagree responses that differed far more than what was expected. The east and midwest regions appear to be similar in their responses, with the west not far from them.  
+
+Relating this back to the original survey question the test shows that there is a greater proportion of university students originating from the east, west and midwest that are more comfortable with diversity than the southern students.  The culture of these regions is possibly a factor for this associated relationship with their decision. 
+
+----
+
