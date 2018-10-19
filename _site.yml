@@ -1,0 +1,109 @@
+name: "math-325-notebook"
+navbar:
+  title: "Math 325 Notebook"
+  left:
+    - text: "Table of Contents"
+      href: index.html
+    - text: "Describing Data"
+      menu:
+        - text: "Graphical Summaries"
+          href: GraphicalSummaries.html
+        - text: "Numerical Summaries"
+          href: NumericalSummaries.html
+    - text: "Making Inference"
+      menu: 
+        - text: "Making Inference"
+          href: MakingInference.html
+        - text: "t Tests"
+          href: tTests.html
+        - text: "Wilcoxon Tests"
+          href: WilcoxonTests.html
+        - text: "ANOVA"
+          href: ANOVA.html
+        - text: "Kruskal-Wallis"
+          href: Kruskal.html
+        - text: "Linear Regression"
+          href: LinearRegression.html
+        - text: "Logistic Regression"
+          href: LogisticRegression.html
+        - text: "Chi-Squared Tests"
+          href: ChiSquaredTests.html
+        - text: "Permutation Tests"
+          href: PermutationTests.html
+    - text: "R Help"
+      menu:
+        - text: "R Commands"
+          href: RCommands.html
+        - text: "R Markdown Hints"
+          href: RMarkdownHints.html
+    - text: "Analyses"
+      menu:
+        - text: "Analysis Rubric"
+          href: ./Analyses/AnalysisRubric.html
+        - text: "Good Example Analysis"
+          href: ./Analyses/StudentHousing.html
+        - text: "Poor Example Analysis"
+          href: ./Analyses/StudentHousingPOOR.html
+        - text: "Women Student Housing Analysis"
+          href: ./Analyses/StudentHousingII.html
+        - text: "Movie Analysis"
+          href: ./Analyses/Movies.html
+        - text: "Rail Trail Analysis"
+          href: ./Analyses/RailTrail.html
+        - text: "Recalling Words Analysis"
+          href: ./Analyses/RecallingWords.html
+        - text: "Day Care Fines Analysis"
+          href: ./Analyses/DayCare.html
+        - text: "Reading Comprehension Analysis"
+          href: ./Analyses/ReadingComprehension.html
+        - text: "Simple Linear Regression Analysis"
+          href: ./Analyses/MySimpleLinearRegression.html
+        - text: "Cadillacs Analysis"
+          href: ./Analyses/CarPrices.html
+        - text: "Great Harvest Analysis"
+          href: ./Analyses/project1.html
+        - text: "Logistic Regression"
+          href: ./Analyses/MyLogisticRegression.html
+        - text: "Discrimination"
+          href: ./Analyses/Discrimination.html
+        - text: "Permutation"
+          href: ./Analyses/MyPermutationTest.html  
+        - text: "Math Tutoring"
+          href: ./Analyses/project2.html
+    - text: "Rmd Files"
+      menu:
+        - text: "StudentHousingII.Rmd"
+          href: ./Analyses/StudentHousingII.Rmd
+        - text: "Movies.Rmd"
+          href: ./Analyses/Movies.Rmd
+        - text: "RailTrail.Rmd"
+          href: ./Analyses/RailTrail.Rmd
+        - text: "RecallingWords.Rmd"
+          href: ./Analyses/RecallingWords.Rmd
+        - text: "DayCare.Rmd"
+          href: ./Analyses/DayCare.Rmd
+        - text: "ReadingComprehension.Rmd"
+          href: ./Analyses/ReadingComprehension.Rmd
+        - text: "MySimpleLinearRegression.Rmd"
+          href: ./Analyses/MySimpleLinearRegression.Rmd
+        - text: "CarPrices.Rmd"
+          href: ./Analyses/CarPrices.Rmd
+        - text: "project1.Rmd"
+          href: ./Analyses/project1.Rmd
+        - text: "Logistic Regression Rmd"
+          href: ./Analyses/MyLogisticRegression.Rmd
+        - text: "Discrimination Rmd"
+          href: ./Analyses/Discrimination.Rmd
+        - text: "MyPermutationTest"
+          href: ./Analyses/MyPermutationTest.Rmd
+        - text: "project2.Rmd"
+          href: ./Analyses/project2.Rmd
+    - text: "Probability"
+      menu:
+        - text: "Discete Distributions"
+          href: ./Distributions/Discrete.html
+        - text: "Continuous Distributions"
+          href: ./Distributions/Continuous.html
+output_dir: '.'
+
+  
