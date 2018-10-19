@@ -1,0 +1,297 @@
+---
+title: "Discrete Distributions"
+output: 
+  html_document: 
+    theme: cerulean
+    code_folding: hide
+header-includes: 
+  - \usepackage{amsmath}
+---
+
+----
+
+## Discrete Uniform Distribution 
+
+----
+
+#### PDF
+
+
+$$
+f(X=x)=\left\{
+\begin{array}{ll}
+      \frac{1}{n} \ ,  & x=1,2,3,...,n \\
+      0 \ , & otherwise
+\end{array} 
+\right.
+$$
+
+#### CDF
+
+$$
+F(X \le x)=P(X \leq x)=
+\left\{
+\begin{array}{ll}
+      0 \ , &  x \le 0  \\
+      \frac{x}{n} \ , & x \le 1,2,3,...n \\
+      1 \ , & x > n
+\end{array} 
+\right.
+$$
+
+#### Expected Value and Variance  
+
+$$
+E[X]= \frac{n + 1}{2}   \\
+V[X]= \frac{n^2-1}{12}
+$$
+
+#### MGF
+
+$$
+M_X(t)= \frac{e^t(1-e^{tn})}{n(1-e^t)}
+$$
+
+----
+
+## Bernoulli Distribution 
+
+----
+
+$X \sim Bernoulli(p)$
+
+The bernoulli will simulate a random variable that has two outcomes, success or failure. A good example is the flip of the coin, where the probability of getting heads is $p=0.5$ and tails is $1-0.5$.  
+
+#### PDF
+
+The pdf is inherently piecewise
+
+$$
+f(X=x)=\left\{
+\begin{array}{ll}
+      p \ ,  & x=1 \\
+      1-p \ , & x=0 \\
+      0 \ , & otherwise
+\end{array} 
+\right.
+$$
+
+but can also be written as one function, 
+
+$$
+f(X=x)=\left\{
+\begin{array}{ll}
+      p^x(1-p)^{1-x} \ , & x=0,1 \\
+      0 \ , & otherwise
+\end{array} 
+\right.
+$$
+
+#### CDF
+
+$$
+F(X \le x)=P(X \leq x)=
+\left\{
+\begin{array}{ll}
+      0 \ , & x < 1 \\
+      1-p \ , & 0\le x < 1 \\
+      1 \ , & x \ge 1
+\end{array} 
+\right.
+$$
+
+#### Expected Value and Variance  
+
+$$
+E[X]=p   \\
+V[X]=p(1-p)
+$$
+
+#### MGF
+
+$$
+M_X(t)=1-p+pe^t
+$$
+
+----
+
+## Binomial Distribution
+
+----
+
+Given that $X_i \sim Bernoulli(p)$, the binomial of random variable $Y$ can be expressed as $Y = \sum\limits_{i=1}^n X_i$. Thus $Y \sim Bin(n,p)$
+
+#### PDF
+
+$$
+f(Y = y)=\left\{
+\begin{array}{ll}
+      \binom{n}{y} p^y(1-p)^{n-y} \ , & y=0,1,2,...,n \\
+      0 \ , & otherwise
+\end{array} 
+\right.
+$$
+
+#### CDF
+
+$$
+F(Y \le y)=P(Y \le y) = \sum\limits_{i=1}^n b(y;n,p) \ \ \ \ \ y=0,1,2,...,n
+$$
+
+#### Expected Value and Variance 
+
+$$
+E[Y]=np
+$$
+
+$$
+V[Y]=np(1-p)
+$$
+
+#### MGF 
+
+$$
+M_Y(t)=(1-p+pe^t)^n
+$$
+
+----
+
+## Geometric Distribution 
+
+----
+
+$X \sim Geometric(p)$
+
+This distribution counts the number of failures before the first success. 
+
+#### PDF 
+
+$$
+f(X=x)=\left\{
+\begin{array}{ll}
+      p(1-p)^x \ , & x=0,1,2,...,n \\
+      0 \ , & otherwise
+\end{array} 
+\right.
+$$
+
+#### CDF
+
+$$
+F(X \le x)=\sum\limits_{i=1}^n p(1-p)^x=1-(1-p)^{x+1}
+$$
+
+#### Expected Value and Variance
+
+$$
+E[X]= \frac{1-p}{p} \\
+V[X]=\frac{1-p}{p^2}
+$$
+
+#### MGF
+
+$$
+M_X(t)=\frac{p}{1-(1-p)e^t}
+$$
+
+----
+
+## Negative Binomial Distribution
+
+----
+
+Given that $X_i \sim \text{Geometric}(p)$, the negative binomial of random variable $Y$ can be expressed as $Y = \sum\limits_{i=1}^n X_i$. Thus $Y \sim \text{nb}(r,p)$. Where $r$ is the number of successes with probability $p$. 
+
+#### PDF
+
+$$
+f(Y=y)=\left\{
+\begin{array}{ll}
+      \binom{y+r-1}{r-1} p^r(1-p)^{y} \ , & y=0,1,2,...,n \\
+      0 \ , & otherwise
+\end{array} 
+\right.
+$$
+
+#### CDF 
+
+$$
+F(Y \le y)=P(Y \le y) = \sum\limits_{i=1}^n nb(y;n,p) \ \ \ \ \ y=0,1,2,...,n
+$$
+
+#### Expected Value and Variance 
+
+$$
+E[Y]= \frac{r(1-p)}{p}  \\
+V[Y]= \frac{r(1-p)}{p^2}
+$$
+
+#### MGF
+
+$$
+M_X(t)=\frac{p^r}{[1-(1-p)e^t]^r}
+$$
+
+----
+
+## Hypergeometric Distribution 
+
+----
+
+$X \sim h(n,M,N)$, where $n$ is sample size, $N$ is a known population size, and $M$ is the number of successes within the population. 
+
+#### PDF 
+
+$$
+f(X = x) = \frac{\binom{N}{x} \binom{N-M}{n-x}}{\binom{M}{n}} 
+$$
+
+#### Expected Value and Variance 
+
+The expected value and variance are similair to the binomial's where $p=\frac{M}{N}$. 
+
+$$
+E[X]=n\frac{M}{N}  \\
+V[X]=n\frac{M}{N}\Big(1-\frac{M}{N}\Big) \Big( \frac{N-n}{N-1} \Big)
+$$
+
+----
+
+## Poisson Distribution
+
+----
+
+$X \sim Poisson(\lambda)$
+
+#### PDF
+
+$$
+f(X=x)=\left\{
+\begin{array}{ll}
+      \frac{e^{-\lambda}\lambda^x}{x!} \ , & x=0,1,2,...,n \\
+      0 \ , & otherwise
+\end{array} 
+\right.
+$$
+
+#### CDF
+
+$$
+F(X \le x)=\sum\limits_{i=1}^n \frac{e^{-\lambda}\lambda^x}{x!}
+$$
+
+#### Expected Value and Variance 
+
+$$
+E[X]=V[X]=\lambda
+$$
+
+#### MGF
+
+$$
+M_X(t)=e^{\lambda(e^t-1)}
+$$
+
+
+
+----

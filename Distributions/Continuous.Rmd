@@ -1,0 +1,347 @@
+---
+title: "Continuous Distributions"
+output: 
+  html_document: 
+    theme: cerulean
+    code_folding: hide
+header-includes: 
+  - \usepackage{amsmath}
+---
+
+----
+
+## Continuous Uniform Distribution 
+
+----
+
+$X \sim Uniform(\alpha, \beta)$.
+
+#### PDF 
+
+$$
+f(X=x)=\left\{
+\begin{array}{ll}
+      \frac{1}{\beta - \alpha} \ , &  \alpha \le x \le \beta  \\
+      0 \ , & otherwise
+\end{array} 
+\right.
+$$
+
+
+#### CDF
+
+$$
+F(X \le x)=P(X \leq x)=
+\left\{
+\begin{array}{ll}
+      0 \ , & x < \alpha \\
+      \frac{x- \alpha}{\beta - \alpha} \ , & \alpha \le x < \beta \\
+      1 \ ,& x \ge \beta
+\end{array} 
+\right.
+$$
+
+#### Expected Value and Variance  
+
+$$
+E[X]=\frac{\beta + \alpha}{2}   \\
+V[X]=\frac{(\beta - \alpha)^2}{12}
+$$
+
+#### MGF
+
+$$
+M_X(t)=\frac{e^{t\beta}-e^{t\alpha}}{t(\beta-\alpha)}
+$$
+
+----
+
+## Standard Normal Distribution 
+
+----
+
+To obtain the standard normal distribution take X, the Normal distribtion, and apply the following transformation, $Z=\frac{X-\mu}{\sigma}$, to get $Z \sim N(0, 1)$.
+
+#### PDF 
+
+$$
+f(Z=z)=\left\{
+\begin{array}{ll}
+      \frac{1}{\sqrt{2\pi}}e^{\frac{-z^2}{2}} \ , &  -\infty \le z \le \infty  \\
+      0 \ , & otherwise
+\end{array} 
+\right.
+$$
+
+
+#### CDF
+
+$$
+F(Z \le z) = \phi(z) = \int_{-\infty}^{z} \frac{1}{\sqrt{2\pi}}e^{\frac{-s^2}{2}}ds 
+$$
+
+#### Expected Value and Variance  
+
+$$
+E[Z]=0  \\
+V[Z]=1
+$$
+
+#### MGF
+
+$$
+M_Z(t)=e^{t^2/2}
+$$
+
+
+----
+
+## Normal Distribution 
+
+----
+
+To obtain the Normal distribution take Z, the standard Normal and apply the following transformation, $X=\sigma Z + \mu$, to get, $X \sim N(\mu, \sigma^2)$.
+
+#### PDF 
+
+$$
+f(X=x)=\left\{
+\begin{array}{ll}
+      \frac{1}{\sqrt{2\pi\sigma^2}}e^{\frac{-(x-\mu)^2}{2\sigma^2}} \ , &  -\infty \le x \le \infty  \\
+      0 \ , & otherwise
+\end{array} 
+\right.
+$$
+
+
+#### CDF
+
+$$
+F(X \le x) = \int_{-\infty}^{x} \frac{1}{\sqrt{2\pi\sigma^2}}e^{\frac{-(s-\mu)^2}{2\sigma^2}}ds 
+$$
+
+#### Expected Value and Variance  
+
+$$
+E[X]=\mu  \\
+V[X]=\sigma^2
+$$
+
+#### MGF
+
+$$
+M_X(t)=e^{\mu t+\sigma^2t^2/2}
+$$
+
+----
+
+## Exponential Distribution 
+
+----
+
+$X \sim Exp(\lambda)$
+
+The exponential distribution is great for probabilities of waiting times. How long it takes for event $A$ to occur. 
+
+Please note that the exponential is the exact same distribution as $X \sim Gamma(\alpha=1, \beta=1/ \lambda)$ 
+
+#### PDF 
+
+$$
+f(X=x)=\left\{
+\begin{array}{ll}
+      \lambda e^{-\lambda x} \ , &  0 \le x \\
+      0 \ , & otherwise
+\end{array} 
+\right.
+$$
+
+
+#### CDF
+
+$$
+F(X \le x) =  1 - e^{-\lambda x}  \ ,\ \ \text{for} \ 0 \le x 
+$$
+
+
+#### Expected Value and Variance  
+
+$$
+E[X]=\mu \\ 
+V[X]=\sigma^2
+$$
+
+#### MGF
+
+$$
+M_X(t)=\frac{\lambda}{\lambda-t} \ ,\ \ \text{for} \ t < \lambda 
+$$
+
+----
+
+## Gamma Distribution 
+
+----
+
+$X \sim Gamma(\alpha, \beta)$
+
+Please note that the incomplete gamma pdf is $X \sim Gamma(\alpha, \beta = 1)$
+
+
+#### PDF 
+
+$$
+f(X=x)=\left\{
+\begin{array}{ll}
+      \frac{1}{\beta^{\alpha} \Gamma(\alpha)} x^{\alpha - 1} e^{-x/ \beta} \ , &  0 \le x \\
+      0 \ , & otherwise
+\end{array} 
+\right.
+$$
+
+
+#### Expected Value and Variance  
+
+$$
+E[X]=\alpha \beta \\ 
+V[X]=\alpha \beta^2
+$$
+
+#### MGF
+
+$$
+M_X(t)=(1-\beta t)^{-\alpha} \ ,\ \ \text{for} \ t < 1/ \beta
+$$
+
+----
+
+## Chi-Square Distribution 
+
+----
+
+$X \sim \chi^2(\nu)$
+
+Please note that the chi-square distribution is $X \sim Gamma(\alpha = \nu / 2, \beta = 2)$, where $\nu$ is the degrees of freedom. 
+
+Another way to obtain the chi-sqaure is to square the standard normal distribution. $Z^2 \sim \chi^2(1)$. However, if we let $Y= \sum_{i=1}^n Z_i^2$, then $Y \sim \chi^2(n)$
+
+
+#### PDF 
+
+$$
+f(X=x)=\left\{
+\begin{array}{ll}
+      \frac{1}{2^{\nu / 2} \Gamma(\nu / 2)} x^{\nu / 2 - 1} e^{-x/2} \ , &  0 \le x \\
+      0 \ , & otherwise
+\end{array} 
+\right.
+$$
+
+
+#### Expected Value and Variance  
+
+$$
+E[X]=\nu \\ 
+V[X]=2 \nu
+$$
+
+#### MGF
+
+$$
+M_X(t)=(1-2t)^{-\nu / 2} \ ,\ \ \text{for} \ t < 1/2
+$$
+
+----
+
+## Weibull Distribution 
+
+----
+
+$X \sim Weibull(\alpha, \beta)$
+
+
+#### PDF 
+
+$$
+f(X=x)=\left\{
+\begin{array}{ll}
+      \frac{\alpha}{\beta^{\alpha}} x^{\alpha - 1} e^{-(x/ \beta)^\alpha} \ , &  0 \le x \\
+      0 \ , & otherwise
+\end{array} 
+\right.
+$$
+
+
+#### Expected Value and Variance  
+
+$$
+E[X]=\beta \Gamma (1 + 1/ \alpha)\\ 
+V[X]=\beta^2 [\Gamma(1+2/\alpha)-\Gamma(1+1/\alpha)^2 ]
+$$
+
+#### CDF
+
+$$
+F(X \le x) = 1- e^{-(x/\beta)^{\alpha}} \ ,\ \ \text{for} \ 0 \le x 
+$$
+
+----
+
+## Standard Beta Distribution 
+
+----
+
+$X \sim Beta(\alpha, \beta)$
+
+
+#### PDF 
+
+$$
+f(X=x)=\left\{
+\begin{array}{ll}
+      \frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha)\Gamma(\beta)}x^{\alpha - 1}(1-x)^{\beta - 1} \ , &  0 \le x \le 1\\
+      0 \ , & otherwise
+\end{array} 
+\right.
+$$
+
+#### Expected Value and Variance  
+
+$$
+E[X]=\frac{\alpha}{\alpha + \beta} \\ 
+V[X]= \frac{\alpha \beta}{(\alpha + \beta + 1)(\alpha + \beta)^2}
+$$
+
+----
+
+## t Distribution 
+
+----
+
+$T \sim t(\nu)$
+
+The t is obtained by the transformation $T = \frac{Z}{\sqrt{X/ \nu}}$, where $X \sim \chi_\nu^2$ is an independent random variable and $Z$ is a standard normal independent rv. 
+
+
+#### PDF 
+
+$$
+f(t)= \frac{1}{\sqrt{\pi \nu}} \frac{\Gamma[(\nu + 1)/2]}{\Gamma(\nu / 2)} \frac{1}{(1+t^2/ \nu)^{(\nu +1)/2}} \ , \ \ \ -\infty < t < \infty  
+$$
+
+----
+
+## F Distribution 
+
+----
+
+$X \sim F(\nu)$
+
+
+#### PDF 
+
+$$
+f(t)= 
+$$
+
+----
